@@ -89,16 +89,11 @@ export function Hero({ onARViewClick }: HeroProps) {
         </p>
         
         <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-8">
-          {/* <Button size="lg" className="bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary text-white px-10 py-6 text-xl rounded-full shadow-2xl transform hover:scale-105 transition-all duration-300 border-2 border-white/20">
-            <Sparkles className="mr-3 h-6 w-6 animate-spin-slow" />
-            Begin Sacred Journey
-            <ArrowRight className="ml-3 h-6 w-6" />
-          </Button> */}
           
           <Button 
             onClick={onARViewClick}
             size="lg" 
-            className="bg-gradient-to-r from-accent to-secondary hover:from-secondary hover:to-accent text-accent-foreground px-10 py-6 text-xl rounded-full shadow-2xl transform hover:scale-105 transition-all duration-300 border-2 border-accent/50 transition-transform"
+            className="bg-gradient-to-r from-accent to-secondary hover:from-secondary hover:to-accent text-accent-foreground px-10 py-6 text-xl rounded-full shadow-2xl transform hover:scale-105 transition-all duration-300 transition-transform"
           >
             <Eye className="mr-3 h-6 w-6" />
             AR Experience

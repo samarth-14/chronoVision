@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Smartphone, QrCode, Eye, Zap, Sparkles, ArrowLeft, MapPin, Clock, Calendar, Users, Crown } from 'lucide-react';
 import { getARSites, type HeritageSite } from '../data/heritage-sites';
 import { HistoryModal } from './HistoryModal';
+import { Skeleton } from './ui/skeleton';
 
 interface ARViewProps {
   onBack: () => void;
@@ -12,15 +13,32 @@ interface ARViewProps {
 }
 
 export function ARView({ onBack, selectedSiteId }: ARViewProps) {
-  const temples = getARSites();
-  const [selectedTemple, setSelectedTemple] = useState<number | null>(() => {
-    if (selectedSiteId) {
-      const siteIdNumber = parseInt(selectedSiteId, 10);
-      const index = temples.findIndex(temple => temple.id === siteIdNumber);
-      return index !== -1 ? index : null;
-    }
-    return null;
-  });
+  const [temples, setTemples] = useState<HeritageSite[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedTemple, setSelectedTemple] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchAndSetSites = async () => {
+      setIsLoading(true);
+      try {
+        const arSites = await getARSites();
+        setTemples(arSites);
+
+        // This logic now runs after the temples have been fetched
+        if (selectedSiteId) {
+          const siteIdNumber = parseInt(selectedSiteId, 10);
+          const index = arSites.findIndex(temple => temple.id === siteIdNumber);
+          setSelectedTemple(index !== -1 ? index : null);
+        }
+      } catch (error) {
+        console.error("Failed to fetch AR sites:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAndSetSites();
+  }, [selectedSiteId]);
   const [historyModalOpen, setHistoryModalOpen] = useState(false);
 
   const generateQRCode = (url: string = '') => {

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Badge } from './ui/badge';
-import { ImageWithFallback } from './ui/ImageWithFallback';
+import { ImageWithFallback } from './figma/ImageWithFallback';
 import { MapPin, Calendar, Star } from 'lucide-react';
 
 interface SiteCardProps {
@@ -11,6 +11,7 @@ interface SiteCardProps {
   description: string;
   category: string;
   isUNESCO?: boolean;
+  onClick?: () => void;
 }
 
 export function SiteCard({ 
@@ -20,10 +21,14 @@ export function SiteCard({
   image, 
   description, 
   category,
-  isUNESCO = false 
+  isUNESCO = false,
+  onClick 
 }: SiteCardProps) {
   return (
-    <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer">
+    <Card 
+      className="group overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer hover:scale-105 hover:border-primary/50 relative equal-height-card"
+      onClick={onClick}
+    >
       <CardHeader className="p-0">
         <div className="relative overflow-hidden">
           <ImageWithFallback
@@ -37,6 +42,7 @@ export function SiteCard({
             </Badge>
             {isUNESCO && (
               <Badge className="bg-blue-600 text-white">
+                <Star className="h-3 w-3 mr-1" />
                 UNESCO
               </Badge>
             )}
@@ -44,7 +50,7 @@ export function SiteCard({
         </div>
       </CardHeader>
       
-      <CardContent className="p-6">
+      <CardContent className="p-6 card-content">
         <h3 className="mb-2 group-hover:text-primary transition-colors">
           {title}
         </h3>
@@ -60,9 +66,13 @@ export function SiteCard({
           </div>
         </div>
         
-        <p className="text-muted-foreground text-sm leading-relaxed">
+        <p className="text-muted-foreground text-sm leading-relaxed mb-3 card-description">
           {description}
         </p>
+        
+        <div className="text-xs text-primary/70 group-hover:text-primary transition-colors italic mt-auto">
+          Click to explore options →
+        </div>
       </CardContent>
     </Card>
   );

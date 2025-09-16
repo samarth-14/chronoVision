@@ -1,33 +1,38 @@
 import { Card, CardContent, CardHeader } from './ui/card';
-import { ImageWithFallback } from './ui/ImageWithFallback';
+import { ImageWithFallback } from './figma/ImageWithFallback';
 import { Crown, Mountain, Building2, Landmark } from 'lucide-react';
 
+/**
+ * Categories component - displays heritage site categories with images and descriptions
+ * Currently displays static categories. To implement navigation functionality,
+ * add onClick handlers and integrate with React Router (see README.md)
+ */
 export function Categories() {
   const categories = [
     {
       title: "Ancient Monuments",
-      description: "Explore ancient civilizations through their monumental architecture",
+      description: "Explore India's ancient civilizations through their monumental architecture",
       image: "https://images.unsplash.com/photo-1728383172502-e55bdde0ca7b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhbmNpZW50JTIwbW9udW1lbnQlMjBoZXJpdGFnZXxlbnwxfHx8fDE3NTc0NDI0MTd8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
       icon: Mountain,
       count: "250+ Sites"
     },
     {
-      title: "Historic Castles",
-      description: "Medieval fortresses and royal residences across the globe",
+      title: "Royal Palaces & Forts",
+      description: "Magnificent Mughal palaces and Rajput fortresses across India",
       image: "https://images.unsplash.com/photo-1633700774912-b26913ace672?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoaXN0b3JpYyUyMGNhc3RsZSUyMGFyY2hpdGVjdHVyZXxlbnwxfHx8fDE3NTc0NDI0MTh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
       icon: Crown,
       count: "180+ Sites"
     },
     {
       title: "Cultural Museums",
-      description: "Repositories of human history and cultural artifacts",
+      description: "Repositories of Indian history and cultural artifacts",
       image: "https://images.unsplash.com/photo-1660724214366-f1c63c067a78?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoaXN0b3JpY2FsJTIwbXVzZXVtJTIwYnVpbGRpbmd8ZW58MXx8fHwxNzU3NDQyNDE5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
       icon: Building2,
       count: "320+ Sites"
     },
     {
       title: "Sacred Temples",
-      description: "Religious and spiritual sites from various cultures and faiths",
+      description: "Religious and spiritual sites representing India's diverse faiths",
       image: "https://images.unsplash.com/photo-1559891209-0f8805999d09?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjdWx0dXJhbCUyMGhlcml0YWdlJTIwc2l0ZXxlbnwxfHx8fDE3NTc0NDI0MTl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral",
       icon: Landmark,
       count: "200+ Sites"
@@ -40,8 +45,8 @@ export function Categories() {
         <div className="text-center mb-12">
           <h2 className="mb-4">Explore by Category</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Browse heritage sites by type and discover the rich diversity of human cultural achievements 
-            spanning thousands of years of history.
+            Browse Indian heritage sites by type and discover the rich diversity of cultural achievements 
+            spanning thousands of years of history across the subcontinent.
           </p>
         </div>
         
@@ -49,7 +54,12 @@ export function Categories() {
           {categories.map((category, index) => {
             const IconComponent = category.icon;
             return (
-              <Card key={index} className="group overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer">
+              <Card 
+                key={index} 
+                className="group overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer"
+                // TODO: Add onClick handler for category navigation
+                // onClick={() => handleCategoryClick(category.type)}
+              >
                 <CardHeader className="p-0">
                   <div className="relative overflow-hidden">
                     <ImageWithFallback

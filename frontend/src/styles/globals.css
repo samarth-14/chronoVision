@@ -2,6 +2,27 @@
 
 :root {
   --font-size: 16px;
+  
+  /* Logo Configuration - Easy to update */
+  --logo-primary-color: var(--primary);
+  --logo-secondary-color: var(--secondary);
+  --logo-text-size-sm: var(--text-lg);
+  --logo-text-size-md: var(--text-xl);
+  --logo-text-size-lg: var(--text-2xl);
+  --logo-icon-size-sm: 1.5rem;
+  --logo-icon-size-md: 2rem;
+  --logo-icon-size-lg: 2.5rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --text-6xl: 3.75rem;
+  --text-7xl: 4.5rem;
   --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   --foreground: #ffffff;
   --card: rgba(26, 26, 46, 0.95);
@@ -241,6 +262,14 @@ html {
   border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
+/* Mobile menu with darker background for better readability */
+.mobile-menu-glass {
+  background: rgba(10, 10, 25, 0.98) !important;
+  backdrop-filter: blur(20px) !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+}
+
 /* Gradient text effects */
 .gradient-text {
   background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #ffd93d);
@@ -266,6 +295,15 @@ html {
 /* Optimize for scroll performance */
 * {
   scroll-margin-top: 80px;
+}
+
+/* Hide scrollbars but maintain scroll functionality */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar { 
+  display: none;  /* Safari and Chrome */
 }
 
 /* Fixed background parallax effect */
@@ -299,16 +337,380 @@ html {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Mobile menu background - glass-like but darker with high opacity */
-.mobile-menu-bg {
-  background: rgba(15, 15, 25, 0.95);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+/* AR Experience Button with smooth gradient transition */
+.ar-experience-button {
+  position: relative;
+  background: linear-gradient(to right, var(--accent), var(--secondary));
+  transition: transform 300ms ease, box-shadow 300ms ease;
+  overflow: hidden;
 }
 
-/* Blur effect for main content when mobile menu is open */
-.mobile-menu-blur {
-  filter: blur(3px);
-  transition: filter 0.3s ease-out;
+.ar-experience-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to right, var(--secondary), var(--accent));
+  opacity: 0;
+  transition: opacity 300ms ease;
+  z-index: -1;
+}
+
+.ar-experience-button:hover::before {
+  opacity: 1;
+}
+
+.ar-experience-button:hover {
+  transform: scale(1.05);
+}
+
+/* Equal height cards for consistent layout */
+.equal-height-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.equal-height-card > .card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.equal-height-card .card-description {
+  flex: 1;
+}
+
+/* Smoother trackpad scrolling */
+.smooth-scroll-container {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* AR Instructions Card - Fixed positioning with enhanced styling */
+.ar-instructions-card {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(78, 205, 196, 0.05) 100%);
+  backdrop-filter: blur(20px);
+  border: 2px solid rgba(255, 107, 107, 0.3);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+    0 0 20px rgba(255, 107, 107, 0.2);
+  position: relative;
+}
+
+.ar-instructions-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.15) inset,
+    0 0 30px rgba(255, 107, 107, 0.3);
+  transition: all 0.3s ease;
+}
+
+/* Site Selection Cards - Enhanced styling */
+.site-selection-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.site-selection-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 107, 107, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.site-selection-card:hover::before {
+  left: 100%;
+}
+
+.site-selection-card:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 107, 107, 0.4);
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+/* Better text contrast on hover */
+.site-selection-card:hover .group-hover\\:text-primary {
+  color: rgb(255 107 107) !important;
+}
+
+.site-selection-card:hover * {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Sticky positioning for instructions */
+@media (min-width: 1024px) {
+  .sticky-instructions {
+    position: sticky;
+    top: 6rem;
+    height: fit-content;
+  }
+}
+
+/* =================================== */
+/* SCROLLBAR SYSTEM */
+/* =================================== */
+
+/* Main page scrollbar - with themed colors and arrow buttons */
+html, body {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 107, 107, 0.7) rgba(26, 26, 46, 0.2);
+  scrollbar-gutter: stable;
+}
+
+html::-webkit-scrollbar, body::-webkit-scrollbar {
+  width: 8px;
+}
+
+html::-webkit-scrollbar-track, body::-webkit-scrollbar-track {
+  background: rgba(26, 26, 46, 0.2);
+  border-radius: 4px;
+}
+
+html::-webkit-scrollbar-thumb, body::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+html::-webkit-scrollbar-corner, body::-webkit-scrollbar-corner {
+  background: rgba(26, 26, 46, 0.2);
+}
+
+html::-webkit-scrollbar-button, body::-webkit-scrollbar-button {
+  display: block;
+  width: 8px;
+  height: 12px;
+  background: linear-gradient(45deg, var(--primary) 0%, var(--secondary) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+html::-webkit-scrollbar-thumb:hover, body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--accent) 0%, var(--primary) 50%, var(--secondary) 100%);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Modal scrollbar - clean design without arrow buttons */
+.modal-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 107, 107, 0.6) transparent;
+  scrollbar-gutter: stable;
+}
+
+.modal-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.modal-scroll::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.modal-scroll::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.modal-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--accent) 0%, var(--primary) 50%, var(--secondary) 100%);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Thin modal scrollbar - for narrow content areas */
+.modal-scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 107, 107, 0.5) transparent;
+  scrollbar-gutter: stable;
+}
+
+.modal-scroll-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.modal-scroll-thin::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary), var(--secondary));
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.modal-scroll-thin::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.modal-scroll-thin::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.modal-scroll-thin::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--secondary), var(--accent));
+  transform: scaleX(1.2);
+}
+
+/* Visible modal scrollbar - for content that needs obvious scroll indication */
+.modal-scroll-visible {
+  scrollbar-width: auto;
+  scrollbar-color: rgba(255, 107, 107, 0.8) rgba(26, 26, 46, 0.3);
+  scrollbar-gutter: stable;
+}
+
+.modal-scroll-visible::-webkit-scrollbar {
+  width: 12px;
+}
+
+.modal-scroll-visible::-webkit-scrollbar-track {
+  background: rgba(26, 26, 46, 0.3);
+  border-radius: 6px;
+}
+
+.modal-scroll-visible::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+  border-radius: 6px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.modal-scroll-visible::-webkit-scrollbar-corner {
+  background: rgba(26, 26, 46, 0.3);
+}
+
+.modal-scroll-visible::-webkit-scrollbar-button {
+  display: block;
+  width: 12px;
+  height: 16px;
+  background: linear-gradient(45deg, var(--primary) 0%, var(--secondary) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.modal-scroll-visible::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--accent) 0%, var(--primary) 50%, var(--secondary) 100%);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Site list scrollbar - for heritage site listings */
+.site-list-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 107, 107, 0.5) transparent;
+}
+
+.site-list-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.site-list-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.site-list-scroll::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--primary), var(--secondary));
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.site-list-scroll::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.site-list-scroll::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+.site-list-scroll::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--secondary), var(--accent));
+  transform: scaleX(1.2);
+}
+
+/* Modal background styling */
+.modal-background-consistent {
+  background: rgba(26, 26, 46, 0.95) !important;
+  backdrop-filter: blur(15px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.modal-content-background {
+  background: rgba(26, 26, 46, 0.95);
+  backdrop-filter: blur(15px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Body lock for modals - prevent content shift */
+body.modal-open {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+
+body.modal-open::-webkit-scrollbar-track {
+  background: rgba(26, 26, 46, 0.2);
+}
+
+/* Modal layout classes */
+.modal-flex-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal-content-centered {
+  margin-right: 0 !important;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+/* Ensure modal content has proper minimum height and fills available space */
+.modal-content-centered > * {
+  min-height: fit-content;
+}
+
+/* Force content to be taller than viewport when needed for scrolling */
+.modal-content-centered > .flex.flex-col.h-full {
+  min-height: 100vh;
+}
+
+/* Fix any remaining scrollbar conflicts */
+.modal-scroll, .modal-scroll-thin, .modal-scroll-visible {
+  box-sizing: border-box !important;
+}
+
+/* Prevent horizontal overflow in modals */
+.modal-scroll, .modal-scroll-thin, .modal-scroll-visible {
+  overflow-x: hidden;
 }

@@ -3,8 +3,8 @@
 import * as React from "react";
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
-} from "embla-carousel-react@8.6.0";
-import { ArrowLeft, ArrowRight } from "lucide-react@0.487.0";
+} from "embla-carousel-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import { cn } from "./utils";
 import { Button } from "./button";
@@ -133,13 +133,68 @@ function Carousel({
 }
 
 function CarouselContent({ className, ...props }: React.ComponentProps<"div">) {
-  const { carouselRef, orientation } = useCarousel();
+  const { carouselRef, orientation, scrollPrev, scrollNext, api } = useCarousel();
+  const [lastScrollTime, setLastScrollTime] = React.useState(0);
+  const scrollTimeoutRef = React.useRef<NodeJS.Timeout>();
+
+  const handleWheel = React.useCallback(
+    (event: React.WheelEvent) => {
+      if (!api || orientation !== "horizontal") return;
+      
+      const now = Date.now();
+      const timeSinceLastScroll = now - lastScrollTime;
+      
+      // More aggressive debouncing for smoother experience
+      if (timeSinceLastScroll < 150) return;
+      
+      // Check if this is a horizontal scroll gesture (trackpad or shift+wheel)
+      const isHorizontalScroll = Math.abs(event.deltaX) > Math.abs(event.deltaY) || event.shiftKey;
+      
+      if (isHorizontalScroll) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        // Clear any existing timeout
+        if (scrollTimeoutRef.current) {
+          clearTimeout(scrollTimeoutRef.current);
+        }
+        
+        // Lower threshold for more responsive feel, but with better debouncing
+        const scrollThreshold = 20;
+        const deltaX = event.shiftKey ? event.deltaY : event.deltaX;
+        
+        // Immediate response with debounce protection
+        if (Math.abs(deltaX) > scrollThreshold) {
+          if (deltaX > 0) {
+            scrollNext();
+          } else {
+            scrollPrev();
+          }
+          setLastScrollTime(now);
+        }
+      }
+    },
+    [api, orientation, scrollNext, scrollPrev, lastScrollTime]
+  );
+
+  // Cleanup timeout on unmount
+  React.useEffect(() => {
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div
       ref={carouselRef}
-      className="overflow-hidden"
+      className={cn(
+        "overflow-hidden hide-scrollbar",
+        orientation === "horizontal" && "scroll-smooth"
+      )}
       data-slot="carousel-content"
+      onWheel={handleWheel}
     >
       <div
         className={cn(
@@ -179,19 +234,23 @@ function CarouselPrevious({
 }: React.ComponentProps<typeof Button>) {
   const { orientation, scrollPrev, canScrollPrev } = useCarousel();
 
+  // Hide button completely when can't scroll instead of just disabling
+  if (!canScrollPrev) {
+    return null;
+  }
+
   return (
     <Button
       data-slot="carousel-previous"
       variant={variant}
       size={size}
       className={cn(
-        "absolute size-8 rounded-full",
+        "absolute size-8 rounded-full transition-all duration-300 ease-in-out",
         orientation === "horizontal"
           ? "top-1/2 -left-12 -translate-y-1/2"
           : "-top-12 left-1/2 -translate-x-1/2 rotate-90",
         className,
       )}
-      disabled={!canScrollPrev}
       onClick={scrollPrev}
       {...props}
     >
@@ -209,19 +268,23 @@ function CarouselNext({
 }: React.ComponentProps<typeof Button>) {
   const { orientation, scrollNext, canScrollNext } = useCarousel();
 
+  // Hide button completely when can't scroll instead of just disabling
+  if (!canScrollNext) {
+    return null;
+  }
+
   return (
     <Button
       data-slot="carousel-next"
       variant={variant}
       size={size}
       className={cn(
-        "absolute size-8 rounded-full",
+        "absolute size-8 rounded-full transition-all duration-300 ease-in-out",
         orientation === "horizontal"
           ? "top-1/2 -right-12 -translate-y-1/2"
           : "-bottom-12 left-1/2 -translate-x-1/2 rotate-90",
         className,
       )}
-      disabled={!canScrollNext}
       onClick={scrollNext}
       {...props}
     >

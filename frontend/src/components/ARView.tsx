@@ -2,72 +2,28 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader } from './ui/card';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
-import { ScrollArea } from './ui/scroll-area';
 import { Smartphone, QrCode, Eye, Zap, Sparkles, ArrowLeft, MapPin, Clock, Calendar, Users, Crown } from 'lucide-react';
+import { getARSites, type HeritageSite } from '../data/heritage-sites';
+import { HistoryModal } from './HistoryModal';
 
 interface ARViewProps {
   onBack: () => void;
+  selectedSiteId?: string | null;
 }
 
-export function ARView({ onBack }: ARViewProps) {
-  const [selectedTemple, setSelectedTemple] = useState<number | null>(null);
-  
-  const temples = [
-    {
-      id: 0,
-      name: "Kedarnath Temple",
-      location: "Uttarakhand, India",
-      elevation: "3,583 m",
-      description: "One of the twelve Jyotirlingas, nestled in the Himalayas",
-      arUrl: "https://templeexplorer-ar.vercel.app/kedarnath",
-      image: "https://images.unsplash.com/photo-1649147313351-c86537fda0eb?w=400",
-      history: {
-        ancient: "The Kedarnath temple is believed to be over 1,000 years old, though its origins trace back to ancient times when the Pandavas from the Mahabharata sought Lord Shiva's blessings here.",
-        construction: "The present temple structure was built by Adi Shankaracharya in the 8th century CE, constructed using large stone slabs without the use of any mortar.",
-        significance: "It is one of the twelve Jyotirlingas dedicated to Lord Shiva and is part of the Panch Kedar pilgrimage circuit in the Himalayas.",
-        legend: "According to legend, after the Kurukshetra war, the Pandavas sought Lord Shiva's forgiveness. Shiva, wanting to avoid them, took the form of a bull. When found, he disappeared into the ground, leaving behind his hump, which is worshipped at Kedarnath.",
-        architecture: "The temple showcases remarkable ancient Indian architecture with massive stone slabs, conical-shaped lingam, and intricate carvings that have withstood centuries of harsh Himalayan weather.",
-        modernHistory: "The temple suffered significant damage during the 2013 Uttarakhand floods but was restored and continues to be a major pilgrimage destination, opening only during the summer months due to extreme winter conditions."
-      }
-    },
-    {
-      id: 1,
-      name: "Jagannath Temple", 
-      location: "Puri, Odisha",
-      built: "12th Century",
-      description: "Famous for the annual Rath Yatra festival",
-      arUrl: "https://templeexplorer-ar.vercel.app/jagannath",
-      image: "https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=400",
-      history: {
-        ancient: "The Jagannath Temple in Puri dates back to the 12th century and is dedicated to Lord Jagannath, a form of Lord Krishna. The temple has been a center of devotion for over 900 years.",
-        construction: "Built by King Anantavarman Chodaganga Deva of the Eastern Ganga Dynasty around 1135 CE, the temple took several decades to complete under subsequent rulers.",
-        significance: "It is one of the four sacred Char Dham pilgrimage sites for Hindus and is famous for the annual Rath Yatra (Chariot Festival), where the deities are taken out in massive wooden chariots.",
-        legend: "The legend states that Lord Krishna instructed King Indradyumna to build the temple after finding the deity's image floating in the sea. The wooden idols are replaced every 12-19 years in a secret ceremony called Nabakalebara.",
-        architecture: "The temple features stunning Kalinga architecture with a 65-meter tall main spire (shikhara), elaborate carvings, and the famous Chakra (wheel) on top that can be seen from great distances.",
-        modernHistory: "The temple continues to attract millions of devotees annually. The Rath Yatra festival, where devotees pull the chariots of Lord Jagannath, Balabhadra, and Subhadra, is celebrated with great fervor and draws international attention."
-      }
-    },
-    {
-      id: 2,
-      name: "Konark Sun Temple",
-      location: "Odisha, India", 
-      built: "13th Century",
-      description: "UNESCO World Heritage Site shaped like a chariot",
-      arUrl: "https://templeexplorer-ar.vercel.app/konark",
-      image: "https://images.unsplash.com/photo-1564507592333-c60657eea523?w=400",
-      history: {
-        ancient: "The Konark Sun Temple, also known as the Black Pagoda, was built in the 13th century (around 1250 CE) and is dedicated to the Hindu Sun God, Surya.",
-        construction: "Commissioned by King Narasimhadeva I of the Eastern Ganga Dynasty, the temple took 12 years to build and employed over 12,000 artisans and craftsmen.",
-        significance: "The temple is designed as a massive chariot with 24 wheels, pulled by seven horses, representing the Sun God's chariot that carries him across the sky. It's a UNESCO World Heritage Site since 1984.",
-        legend: "Local legends speak of the temple's main attraction - a powerful magnet at the top that could pull ships from the sea. The temple was also said to have been built by Samba, son of Lord Krishna, to cure himself of leprosy.",
-        architecture: "The temple exemplifies Kalinga architecture with intricate stone carvings depicting the wheel of time, celestial beings, animals, and erotic sculptures. The wheels function as sundials, accurately telling time by their shadows.",
-        modernHistory: "Much of the temple is now in ruins due to natural disasters and invasions, but its architectural grandeur continues to inspire visitors. Conservation efforts by the Archaeological Survey of India help preserve this magnificent monument for future generations."
-      }
+export function ARView({ onBack, selectedSiteId }: ARViewProps) {
+  const temples = getARSites();
+  const [selectedTemple, setSelectedTemple] = useState<number | null>(() => {
+    if (selectedSiteId) {
+      const siteIdNumber = parseInt(selectedSiteId, 10);
+      const index = temples.findIndex(temple => temple.id === siteIdNumber);
+      return index !== -1 ? index : null;
     }
-  ];
+    return null;
+  });
+  const [historyModalOpen, setHistoryModalOpen] = useState(false);
 
-  const generateQRCode = (url: string) => {
+  const generateQRCode = (url: string = '') => {
     // In a real implementation, you'd use a QR code library
     // For now, we'll create a visual pattern that represents each temple uniquely
     const pattern = url.split('').map((char, index) => char.charCodeAt(0) + index).slice(0, 64);
@@ -91,10 +47,10 @@ export function ARView({ onBack }: ARViewProps) {
         <div className="text-center mb-16">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <Eye className="h-8 w-8 text-primary animate-pulse" />
-            <h1 className="gradient-text">AR Temple Experience</h1>
+            <h1 className="gradient-text">AR Heritage Experience</h1>
           </div>
           <p className="text-muted-foreground max-w-3xl mx-auto text-lg">
-            Immerse yourself in the sacred beauty of ancient Indian temples through cutting-edge 
+            Immerse yourself in the sacred beauty of ancient Indian heritage sites through cutting-edge 
             Augmented Reality technology. Scan the QR code with your mobile device to begin your spiritual journey.
           </p>
         </div>
@@ -109,10 +65,10 @@ export function ARView({ onBack }: ARViewProps) {
                   <CardHeader className="text-center">
                     <div className="flex items-center justify-center space-x-2 mb-4">
                       <QrCode className="h-6 w-6 text-primary" />
-                      <h3>{temples[selectedTemple].name} AR</h3>
+                      <h3>{temples[selectedTemple].title} AR</h3>
                     </div>
                     <p className="text-muted-foreground">
-                      Scan this QR code to experience {temples[selectedTemple].name} in AR
+                      Scan this QR code to experience {temples[selectedTemple].title} in AR
                     </p>
                   </CardHeader>
                   
@@ -162,111 +118,16 @@ export function ARView({ onBack }: ARViewProps) {
                     </div>
 
                     <div className="grid grid-cols-1 gap-3">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button 
-                            variant="default"
-                            className="w-full bg-gradient-to-r from-accent to-secondary hover:from-accent/80 hover:to-secondary/80"
-                          >
-                            <Clock className="h-4 w-4 mr-2" />
-                            Know the History
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl max-h-[80vh] glass border-2 border-primary/20">
-                          <DialogHeader>
-                            <DialogTitle className="flex items-center space-x-2 text-xl gradient-text">
-                              <Crown className="h-6 w-6 text-accent" />
-                              <span>History of {temples[selectedTemple].name}</span>
-                            </DialogTitle>
-                          </DialogHeader>
-                          <ScrollArea className="max-h-[60vh] pr-4">
-                            <div className="space-y-6">
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                <Card className="glass p-4">
-                                  <div className="flex items-center space-x-2 mb-2">
-                                    <Calendar className="h-4 w-4 text-primary" />
-                                    <span className="font-medium">Built</span>
-                                  </div>
-                                  <p className="text-sm text-muted-foreground">
-                                    {temples[selectedTemple].built || temples[selectedTemple].elevation}
-                                  </p>
-                                </Card>
-                                <Card className="glass p-4">
-                                  <div className="flex items-center space-x-2 mb-2">
-                                    <MapPin className="h-4 w-4 text-secondary" />
-                                    <span className="font-medium">Location</span>
-                                  </div>
-                                  <p className="text-sm text-muted-foreground">
-                                    {temples[selectedTemple].location}
-                                  </p>
-                                </Card>
-                              </div>
-
-                              <div className="space-y-4">
-                                <div>
-                                  <h4 className="font-medium mb-3 flex items-center">
-                                    <Sparkles className="h-4 w-4 mr-2 text-accent" />
-                                    Ancient Origins
-                                  </h4>
-                                  <p className="text-sm text-muted-foreground leading-relaxed">
-                                    {temples[selectedTemple].history.ancient}
-                                  </p>
-                                </div>
-
-                                <div>
-                                  <h4 className="font-medium mb-3 flex items-center">
-                                    <Users className="h-4 w-4 mr-2 text-primary" />
-                                    Construction & Builders
-                                  </h4>
-                                  <p className="text-sm text-muted-foreground leading-relaxed">
-                                    {temples[selectedTemple].history.construction}
-                                  </p>
-                                </div>
-
-                                <div>
-                                  <h4 className="font-medium mb-3 flex items-center">
-                                    <Crown className="h-4 w-4 mr-2 text-secondary" />
-                                    Religious Significance
-                                  </h4>
-                                  <p className="text-sm text-muted-foreground leading-relaxed">
-                                    {temples[selectedTemple].history.significance}
-                                  </p>
-                                </div>
-
-                                <div>
-                                  <h4 className="font-medium mb-3 flex items-center">
-                                    <Sparkles className="h-4 w-4 mr-2 text-accent" />
-                                    Sacred Legends
-                                  </h4>
-                                  <p className="text-sm text-muted-foreground leading-relaxed">
-                                    {temples[selectedTemple].history.legend}
-                                  </p>
-                                </div>
-
-                                <div>
-                                  <h4 className="font-medium mb-3 flex items-center">
-                                    <Eye className="h-4 w-4 mr-2 text-primary" />
-                                    Architectural Marvel
-                                  </h4>
-                                  <p className="text-sm text-muted-foreground leading-relaxed">
-                                    {temples[selectedTemple].history.architecture}
-                                  </p>
-                                </div>
-
-                                <div>
-                                  <h4 className="font-medium mb-3 flex items-center">
-                                    <Clock className="h-4 w-4 mr-2 text-secondary" />
-                                    Modern Era
-                                  </h4>
-                                  <p className="text-sm text-muted-foreground leading-relaxed">
-                                    {temples[selectedTemple].history.modernHistory}
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          </ScrollArea>
-                        </DialogContent>
-                      </Dialog>
+                      {temples[selectedTemple].history && (
+                        <Button 
+                          variant="default"
+                          className="w-full bg-gradient-to-r from-accent to-secondary hover:from-accent/80 hover:to-secondary/80"
+                          onClick={() => setHistoryModalOpen(true)}
+                        >
+                          <Clock className="h-4 w-4 mr-2" />
+                          Know the History
+                        </Button>
+                      )}
 
                       <Button 
                         onClick={() => setSelectedTemple(null)}
@@ -274,7 +135,7 @@ export function ARView({ onBack }: ARViewProps) {
                         className="w-full"
                       >
                         <ArrowLeft className="h-4 w-4 mr-2" />
-                        Back to Temple List
+                        Back to Heritage Sites List
                       </Button>
                     </div>
                   </CardContent>
@@ -286,7 +147,7 @@ export function ARView({ onBack }: ARViewProps) {
                 <div className="space-y-6">
                   <div className="text-center lg:text-left">
                     <h2 className="text-3xl font-bold mb-4 gradient-text">
-                      {temples[selectedTemple].name}
+                      {temples[selectedTemple].title}
                     </h2>
                     <div className="flex items-center justify-center lg:justify-start space-x-2 mb-4">
                       <MapPin className="h-5 w-5 text-primary" />
@@ -308,16 +169,14 @@ export function ARView({ onBack }: ARViewProps) {
                         </div>
                       </Card>
                     )}
-                    {temples[selectedTemple].built && (
-                      <Card className="glass p-4">
-                        <div className="text-center">
-                          <div className="text-2xl font-bold text-secondary mb-2">
-                            {temples[selectedTemple].built}
-                          </div>
-                          <div className="text-sm text-muted-foreground">Built</div>
+                    <Card className="glass p-4">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-secondary mb-2">
+                          {temples[selectedTemple].built || temples[selectedTemple].year}
                         </div>
-                      </Card>
-                    )}
+                        <div className="text-sm text-muted-foreground">Built</div>
+                      </div>
+                    </Card>
                   </div>
 
                   <Card className="glass border-accent/20">
@@ -327,11 +186,11 @@ export function ARView({ onBack }: ARViewProps) {
                         AR Experience Features
                       </h4>
                       <ul className="space-y-2 text-sm text-muted-foreground">
-                        <li>• 360° temple exploration</li>
+                        <li>• 360° heritage site exploration</li>
                         <li>• Historical timeline overlay</li>
                         <li>• Interactive architectural details</li>
                         <li>• Sacred geometry visualization</li>
-                        <li>• Audio spiritual guidance</li>
+                        <li>• Audio cultural guidance</li>
                       </ul>
                     </CardContent>
                   </Card>
@@ -341,102 +200,168 @@ export function ARView({ onBack }: ARViewProps) {
           </div>
         ) : (
           /* Temple Selection View */
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-            {/* Instructions Section */}
-            <div className="order-1 lg:order-1 space-y-8">
-              <div className="space-y-6">
-                <h2 className="flex items-center space-x-2">
-                  <Zap className="h-6 w-6 text-accent" />
-                  <span>How to Experience AR</span>
-                </h2>
-                
-                <div className="space-y-4">
-                  {[
-                    {
-                      step: "1",
-                      title: "Select Temple",
-                      description: "Choose a temple from the list to generate its QR code",
-                      icon: QrCode
-                    },
-                    {
-                      step: "2", 
-                      title: "Scan QR Code",
-                      description: "Use your phone's camera to scan the temple-specific QR code",
-                      icon: Eye
-                    },
-                    {
-                      step: "3",
-                      title: "Explore in AR",
-                      description: "Experience the temple in immersive augmented reality",
-                      icon: Sparkles
-                    }
-                  ].map((item, index) => {
-                    const IconComponent = item.icon;
-                    return (
-                      <Card key={index} className="glass border-l-4 border-l-primary">
-                        <CardContent className="flex items-start space-x-4 p-6">
-                          <div className="flex-shrink-0">
-                            <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                              <span className="text-primary font-semibold">{item.step}</span>
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-start">
+            {/* Fixed Instructions Section */}
+            <div className="order-1 lg:order-1 lg:col-span-2">
+              <div className="lg:sticky lg:top-24">
+                <Card className="ar-instructions-card border-2 border-primary/30 shadow-2xl">
+                  <CardContent className="p-8">
+                    <div className="space-y-6">
+                      <div className="text-center mb-6">
+                        <div className="w-16 h-16 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Zap className="h-8 w-8 text-white" />
+                        </div>
+                        <h2 className="gradient-text mb-2">How to Experience AR</h2>
+                        <p className="text-muted-foreground text-sm">
+                          Follow these simple steps to explore heritage sites in augmented reality
+                        </p>
+                      </div>
+                      
+                      <div className="space-y-4">
+                        {[
+                          {
+                            step: "1",
+                            title: "Select Heritage Site",
+                            description: "Choose a heritage site from the list to generate its QR code",
+                            icon: QrCode,
+                            color: "primary"
+                          },
+                          {
+                            step: "2", 
+                            title: "Scan QR Code",
+                            description: "Use your phone's camera to scan the site-specific QR code",
+                            icon: Eye,
+                            color: "secondary"
+                          },
+                          {
+                            step: "3",
+                            title: "Explore in AR",
+                            description: "Experience the heritage site in immersive augmented reality",
+                            icon: Sparkles,
+                            color: "accent"
+                          }
+                        ].map((item, index) => {
+                          const IconComponent = item.icon;
+                          return (
+                            <div key={index} className="flex items-start space-x-4 p-4 rounded-lg bg-muted/10 border border-border/50 hover:border-primary/30 transition-all duration-300">
+                              <div className="flex-shrink-0">
+                                <div className={`w-12 h-12 bg-gradient-to-br ${
+                                  item.color === 'primary' ? 'from-primary/20 to-primary/10' :
+                                  item.color === 'secondary' ? 'from-secondary/20 to-secondary/10' :
+                                  'from-accent/20 to-accent/10'
+                                } rounded-full flex items-center justify-center border border-border/30`}>
+                                  <span className={`${
+                                    item.color === 'primary' ? 'text-primary' :
+                                    item.color === 'secondary' ? 'text-secondary' :
+                                    'text-accent'
+                                  } font-semibold text-lg`}>{item.step}</span>
+                                </div>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center space-x-2 mb-2">
+                                  <IconComponent className={`h-4 w-4 ${
+                                    item.color === 'primary' ? 'text-primary' :
+                                    item.color === 'secondary' ? 'text-secondary' :
+                                    'text-accent'
+                                  }`} />
+                                  <h4 className="font-medium text-sm">{item.title}</h4>
+                                </div>
+                                <p className="text-muted-foreground text-xs leading-relaxed">{item.description}</p>
+                              </div>
                             </div>
+                          );
+                        })}
+                      </div>
+
+                      <div className="mt-8 p-4 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-lg border border-primary/20">
+                        <div className="flex items-center space-x-2 mb-3">
+                          <Smartphone className="h-5 w-5 text-primary" />
+                          <h4 className="font-medium text-sm">Requirements</h4>
+                        </div>
+                        <div className="space-y-2 text-xs text-muted-foreground">
+                          <div className="flex items-center space-x-2">
+                            <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
+                            <span>Mobile device (iOS 12+ or Android 8+)</span>
                           </div>
-                          <div className="flex-1">
-                            <div className="flex items-center space-x-2 mb-2">
-                              <IconComponent className="h-4 w-4 text-primary" />
-                              <h4>{item.title}</h4>
-                            </div>
-                            <p className="text-muted-foreground text-sm">{item.description}</p>
+                          <div className="flex items-center space-x-2">
+                            <div className="w-1.5 h-1.5 bg-secondary rounded-full"></div>
+                            <span>Camera access enabled</span>
                           </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
+                          <div className="flex items-center space-x-2">
+                            <div className="w-1.5 h-1.5 bg-accent rounded-full"></div>
+                            <span>Stable internet connection</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </div>
 
-            {/* Temple Selection */}
-            <div className="order-2 lg:order-2 space-y-6">
-              <h3 className="flex items-center space-x-2">
-                <Sparkles className="h-5 w-5 text-accent" />
-                <span>Select Temple for AR</span>
-              </h3>
-              
-              <div className="space-y-4">
-                {temples.map((temple, index) => (
-                  <Card key={index} className="glass hover:border-primary/40 transition-all duration-300 cursor-pointer group" onClick={() => setSelectedTemple(index)}>
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <h4 className="font-medium group-hover:text-primary transition-colors">{temple.name}</h4>
-                          <p className="text-sm text-muted-foreground mb-2">{temple.location}</p>
-                          <p className="text-xs text-muted-foreground mb-3">{temple.description}</p>
-                          <div className="flex space-x-2">
-                            {temple.elevation && (
-                              <Badge variant="outline" className="text-xs">
-                                {temple.elevation}
+            {/* Scrollable Heritage Site Selection */}
+            <div className="order-2 lg:order-2 lg:col-span-3">
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <h3 className="flex items-center space-x-2">
+                    <Sparkles className="h-6 w-6 text-accent" />
+                    <span>Select Heritage Site for AR</span>
+                  </h3>
+                  <Badge variant="secondary" className="bg-primary/20 text-primary">
+                    {temples.length} Sites Available
+                  </Badge>
+                </div>
+                
+                <div className="max-h-[600px] overflow-y-auto pr-4 space-y-4 site-list-scroll p-2">
+                  {temples.map((temple, index) => (
+                    <Card key={temple.id} className="site-selection-card glass hover:border-primary/40 transition-all duration-300 cursor-pointer group hover:scale-[1.02] hover:shadow-xl" onClick={() => setSelectedTemple(index)}>
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between mb-3">
+                              <h4 className="font-medium group-hover:text-primary transition-colors text-lg pr-4">{temple.title}</h4>
+                              <Badge variant="secondary" className="bg-accent/20 text-accent whitespace-nowrap">
+                                AR Ready
                               </Badge>
-                            )}
-                            {temple.built && (
-                              <Badge variant="outline" className="text-xs">
-                                Built: {temple.built}
+                            </div>
+                            <div className="flex items-center space-x-1 mb-3">
+                              <MapPin className="h-4 w-4 text-muted-foreground" />
+                              <p className="text-sm text-muted-foreground">{temple.location}</p>
+                            </div>
+                            <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{temple.description}</p>
+                            <div className="flex flex-wrap gap-2 mb-4">
+                              {temple.elevation && (
+                                <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/30">
+                                  {temple.elevation}
+                                </Badge>
+                              )}
+                              <Badge variant="outline" className="text-xs bg-secondary/10 text-secondary border-secondary/30">
+                                Built: {temple.built || temple.year}
                               </Badge>
-                            )}
+                              {temple.isUNESCO && (
+                                <Badge variant="outline" className="text-xs bg-blue-500/20 text-blue-300 border-blue-400/30">
+                                  <Crown className="h-3 w-3 mr-1" />
+                                  UNESCO
+                                </Badge>
+                              )}
+                              <Badge variant="outline" className="text-xs bg-accent/10 text-accent border-accent/30">
+                                {temple.category}
+                              </Badge>
+                            </div>
+                            <Button 
+                              size="sm" 
+                              className="group-hover:scale-105 transition-transform bg-gradient-to-r from-primary to-secondary hover:from-primary/80 hover:to-secondary/80"
+                              onClick={() => setSelectedTemple(index)}
+                            >
+                              <QrCode className="h-4 w-4 mr-2" />
+                              Generate QR Code
+                            </Button>
                           </div>
                         </div>
-                        <div className="flex flex-col items-end space-y-2">
-                          <Badge variant="secondary" className="bg-accent/20 text-accent">
-                            AR Ready
-                          </Badge>
-                          <Button size="sm" className="group-hover:scale-105 transition-transform">
-                            <QrCode className="h-4 w-4 mr-2" />
-                            Get QR Code
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -464,6 +389,15 @@ export function ARView({ onBack }: ARViewProps) {
           </div>
         </div>
       </div>
+      
+      {/* History Modal */}
+      {selectedTemple !== null && (
+        <HistoryModal 
+          isOpen={historyModalOpen} 
+          onClose={() => setHistoryModalOpen(false)} 
+          site={temples[selectedTemple]} 
+        />
+      )}
     </section>
   );
 }

@@ -5,7 +5,7 @@ import { Button } from './ui/button';
 import { Smartphone, QrCode, Eye, Zap, Sparkles, ArrowLeft, MapPin, Clock, Calendar, Users, Crown } from 'lucide-react';
 import { getARSites, type HeritageSite } from '../data/heritage-sites';
 import { HistoryModal } from './HistoryModal';
-import { Skeleton } from './ui/skeleton';
+import QRCode from 'qrcode.react';
 
 interface ARViewProps {
   onBack: () => void;
@@ -91,31 +91,14 @@ export function ARView({ onBack, selectedSiteId }: ARViewProps) {
                   </CardHeader>
                   
                   <CardContent className="flex flex-col items-center space-y-6">
-                    {/* Dynamic QR Code */}
-                    <div className="relative">
-                      <div className="w-64 h-64 bg-white rounded-lg p-4 shadow-2xl">
-                        <div className="w-full h-full bg-black relative overflow-hidden rounded">
-                          {/* Temple-specific QR code pattern */}
-                          <div className="absolute inset-0 grid grid-cols-8 gap-1 p-2">
-                            {generateQRCode(temples[selectedTemple].arUrl).map((value, i) => (
-                              <div 
-                                key={i} 
-                                className={`${
-                                  value % 2 === 0 ? 'bg-black' : 'bg-white'
-                                } rounded-sm`}
-                              />
-                            ))}
-                          </div>
-                          {/* Corner markers */}
-                          <div className="absolute top-2 left-2 w-8 h-8 border-4 border-black bg-white"></div>
-                          <div className="absolute top-2 right-2 w-8 h-8 border-4 border-black bg-white"></div>
-                          <div className="absolute bottom-2 left-2 w-8 h-8 border-4 border-black bg-white"></div>
-                        </div>
-                      </div>
-                      
-                      {/* Animated scanning indicator */}
-                      <div className="absolute -inset-4 border-2 border-primary rounded-lg animate-pulse"></div>
-                    </div>
+                    {/* Real QR Code */}
+<div className="relative">
+  <div className="w-64 h-64 bg-white rounded-lg p-4 shadow-2xl flex items-center justify-center">
+    <QRCode value={temples[selectedTemple].arUrl ?? ''} size={240} />
+  </div>
+  <div className="absolute -inset-4 border-2 border-primary rounded-lg animate-pulse"></div>
+</div>
+                    
 
                     <div className="text-center space-y-2">
                       <Badge variant="secondary" className="bg-primary/20 text-primary">

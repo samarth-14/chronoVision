@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SiteCard } from './SiteCard';
 import { SiteModal } from './SiteModal';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/carousel';
@@ -12,7 +12,25 @@ interface FeaturedSitesProps {
 export function FeaturedSites({ onARViewClick }: FeaturedSitesProps) {
   const [selectedSite, setSelectedSite] = useState<HeritageSite | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const featuredSites = getFeaturedSites();
+  const [featuredSites, setFeaturedSites] = useState<HeritageSite[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeaturedSites = async () => {
+      setIsLoading(true);
+      try {
+        const sites = await getFeaturedSites();
+        setFeaturedSites(sites);
+      } catch (error) {
+        console.error("Failed to fetch featured sites:", error);
+        toast.error("Could not load featured sites.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchFeaturedSites();
+  }, []); // The empty array ensures this runs only once.
 
   const handleSiteClick = (site: HeritageSite) => {
     setSelectedSite(site);

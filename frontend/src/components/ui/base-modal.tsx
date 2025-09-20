@@ -68,8 +68,8 @@ export function BaseModal({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent 
-        className={`${maxWidthClasses[maxWidth]} max-h-[95vh] p-0 modal-background-consistent shadow-2xl [&>button]:hidden ${className}`}
-      >
+  className={`${maxWidthClasses[maxWidth]} max-h-[95vh] p-0 modal-background-consistent shadow-2xl [&>button]:hidden ${className} rounded-lg overflow-hidden`}
+>
         <DialogTitle className="sr-only">{title}</DialogTitle>
         {description && (
           <DialogDescription className="sr-only">

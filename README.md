@@ -61,20 +61,20 @@ To get a local copy up and running, follow these simple steps.
 Make sure you have Node.js and npm installed on your machine.
 
 * **npm**  
-  npm install
-  npm insatll firebase
+  `npm install`
+  `npm insatll firebase`
 
 ### **Installation**
 
 1. **Clone the repository:**  
-   git clone \[https://github.com/your-username/ChronoVision.git\](https://github.com/your-username/ChronoVision.git)  
-   cd ChronoVision
+   `git clone \[https://github.com/your-username/ChronoVision.git\](https://github.com/your-username/ChronoVision.git)  
+   cd ChronoVision`
 
 2. **Navigate to the frontend directory:**  
-   cd frontend
+   `cd frontend`
 
 3. **Install NPM packages:**  
-   npm install
+   `npm install`
 
 4. **Set up Firebase:**  
    * Create a new project on the [Firebase Console](https://console.firebase.google.com/).  
@@ -85,7 +85,7 @@ Make sure you have Node.js and npm installed on your machine.
 *For best practice, it is recommended to move these keys into a .env.local file at the root of the /frontend directory and access them using import.meta.env.VITE\_API\_KEY.*
 
 5. **Run the development server:**  
-   npm run dev
+   `npm run dev`
 
    Your application should now be running on http://localhost:5173 (or another port if 5173 is busy).
 
